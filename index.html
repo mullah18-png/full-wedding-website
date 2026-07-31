@@ -621,7 +621,7 @@
 <body>
 
     <!-- Background Music Player -->
-    <audio id="bg-music" loop>
+    <audio id="bg-music" loop preload="auto">
         <source src="https://cdn.jsdelivr.net/gh/millysbeautycorner/audio-hosting@main/track.mp3" type="audio/mpeg">
     </audio>
 
@@ -842,37 +842,35 @@
 
     <!-- Script Suite -->
     <script>
-        let isMusicPlaying = false;
-        const bgMusic = document.getElementById('bg-music');
-        const musicToggleBtn = document.getElementById('music-toggle');
-        const musicIcon = document.getElementById('music-icon');
+   let isMusicPlaying = false;
+const audio = document.getElementById('bg-music'); // Updated to match your actual HTML ID
 
-        // Toggle Music Play/Pause Function
-        function toggleMusic() {
-            if (isMusicPlaying) {
-                bgMusic.pause();
-                isMusicPlaying = false;
-                musicToggleBtn.classList.remove('playing');
-                musicIcon.innerHTML = `
-                    <path d="M9 18V5l12-2v13"></path>
-                    <circle cx="6" cy="18" r="3"></circle>
-                    <circle cx="18" cy="16" r="3"></circle>
-                `;
-            } else {
-                bgMusic.play().then(() => {
-                    isMusicPlaying = true;
-                    musicToggleBtn.classList.add('playing');
-                    musicIcon.innerHTML = `
-                        <path d="M9 18V5l12-2v13"></path>
-                        <circle cx="6" cy="18" r="3"></circle>
-                        <circle cx="18" cy="16" r="3"></circle>
-                        <line x1="1" y1="1" x2="23" y2="23" stroke="var(--deep-maroon)" stroke-width="2"></line>
-                    `;
-                }).catch(e => {
-                    console.log("Audio playback prevented or restricted: ", e);
-                });
-            }
-        }
+function toggleMusic() {
+    if (!audio) return;
+
+    if (isMusicPlaying) {
+        audio.pause();
+        isMusicPlaying = false;
+    } else {
+        audio.play().then(() => {
+            isMusicPlaying = true;
+        }).catch(error => {
+            console.log("Autoplay was prevented by the mobile browser: ", error);
+        });
+    }
+}
+
+// Ensure your landing overlay button triggers it on click
+document.getElementById('viewDetailsBtn').addEventListener('click', function() {
+    document.getElementById('auth-overlay').classList.add('hidden');
+    document.getElementById('website-container').classList.add('active');
+    
+    if (!isMusicPlaying) {
+        audio.play().then(() => {
+            isMusicPlaying = true;
+        }).catch(e => console.log("Audio play failed on interaction:", e));
+    }
+});   
 
         musicToggleBtn.addEventListener('click', toggleMusic);
 
