@@ -401,7 +401,12 @@
             color: #666;
             line-height: 1.5;
         }
-
+/* Add breathing room at the bottom of the gallery for mobile screens */
+@media (max-width: 768px) {
+    #gallery.page-section {
+        padding-bottom: 120px !important;
+    }
+}
         /* Gallery Grid */
         .gallery-grid {
             display: grid;
