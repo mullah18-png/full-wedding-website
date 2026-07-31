@@ -402,29 +402,29 @@
             line-height: 1.5;
         }
 
-/* Ensure mobile layout containers wrap cleanly and never clip content */
-@media (max-width: 768px) {
-    #gallery.page-section, 
-    .memories-section, 
-    .gallery-container {
-        padding-bottom: 60px !important;
-        height: auto !important;
-        min-height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
-        position: relative !important;
-    }
+        /* Ensure mobile layout containers wrap cleanly and never clip content */
+        @media (max-width: 768px) {
+            #gallery.page-section, 
+            .memories-section, 
+            .gallery-container {
+                padding-bottom: 60px !important;
+                height: auto !important;
+                min-height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+                position: relative !important;
+            }
 
-    /* Force the header/title text to wrap and stay visible */
-    #gallery h2, 
-    .memories-title, 
-    .section-title {
-        overflow: visible !important;
-        white-space: normal !important;
-        height: auto !important;
-        position: relative !important;
-    }
-}
+            #gallery h2, 
+            .memories-title, 
+            .section-title {
+                overflow: visible !important;
+                white-space: normal !important;
+                height: auto !important;
+                position: relative !important;
+            }
+        }
+
         /* Gallery Grid */
         .gallery-grid {
             display: grid;
@@ -480,7 +480,7 @@
             border: 1px solid var(--blush-dark);
             background: var(--white);
             font-family: 'Montserrat', sans-serif;
-            font-size: 16px; /* Prevents auto-zoom on iOS Safari */
+            font-size: 16px;
             border-radius: 2px;
             outline: none;
             transition: border-color 0.3s;
@@ -644,7 +644,7 @@
             <p class="section-subtitle">Wedding Celebration</p>
             <h2 class="script-font" style="color: var(--deep-maroon);">M & A</h2>
             <p>July 02 & July 04, 2027</p>
-            <button id="viewDetailsBtn" type="button" style="transition: background 0.3s;" onmouseover="this.style.background='var(--deep-maroon)'" onmouseout="this.style.background='var(--charcoal)'">Click to View Details</button>
+            <button id="viewDetailsBtn" type="button">Click to View Details</button>
         </div>
     </div>
 
@@ -815,7 +815,7 @@
                             <textarea id="message" name="message" rows="3" placeholder="Let us know if you have any requirements..."></textarea>
                         </div>
 
-                        <button type="submit" class="submit-btn" style="transition: background 0.3s;" onmouseover="this.style.background='var(--deep-maroon)'" onmouseout="this.style.background='var(--charcoal)'">Send RSVP</button>
+                        <button type="submit" class="submit-btn">Send RSVP</button>
                     </form>
 
                     <div class="confirmation-msg" id="confirmation-message">
@@ -842,37 +842,68 @@
 
     <!-- Script Suite -->
     <script>
-   let isMusicPlaying = false;
-const audio = document.getElementById('bg-music'); // Updated to match your actual HTML ID
+        let isMusicPlaying = false;
+        const audio = document.getElementById('bg-music');
+        const musicToggleBtn = document.getElementById('music-toggle');
+        const viewDetailsBtn = document.getElementById('viewDetailsBtn');
+        const authOverlay = document.getElementById('auth-overlay');
+        const websiteContainer = document.getElementById('website-container');
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
 
-function toggleMusic() {
-    if (!audio) return;
+        function toggleMusic() {
+            if (!audio) return;
 
-    if (isMusicPlaying) {
-        audio.pause();
-        isMusicPlaying = false;
-    } else {
-        audio.play().then(() => {
-            isMusicPlaying = true;
-        }).catch(error => {
-            console.log("Autoplay was prevented by the mobile browser: ", error);
-        });
-    }
-}
+            if (isMusicPlaying) {
+                audio.pause();
+                isMusicPlaying = false;
+                musicToggleBtn.classList.remove('playing');
+            } else {
+                audio.play().then(() => {
+                    isMusicPlaying = true;
+                    musicToggleBtn.classList.add('playing');
+                }).catch(error => {
+                    console.log("Autoplay was prevented by the mobile browser: ", error);
+                });
+            }
+        }
 
-// Ensure your landing overlay button triggers it on click
-document.getElementById('viewDetailsBtn').addEventListener('click', function() {
-    document.getElementById('auth-overlay').classList.add('hidden');
-    document.getElementById('website-container').classList.add('active');
-    
-    if (!isMusicPlaying) {
-        audio.play().then(() => {
-            isMusicPlaying = true;
-        }).catch(e => console.log("Audio play failed on interaction:", e));
-    }
-});   
+        if (musicToggleBtn) {
+            musicToggleBtn.addEventListener('click', toggleMusic);
+        }
 
-        musicToggleBtn.addEventListener('click', toggleMusic);
+        if (viewDetailsBtn) {
+            viewDetailsBtn.addEventListener('click', function() {
+                if (authOverlay) authOverlay.classList.add('hidden');
+                if (websiteContainer) websiteContainer.classList.add('active');
+                
+                if (!isMusicPlaying && audio) {
+                    audio.play().then(() => {
+                        isMusicPlaying = true;
+                        if (musicToggleBtn) musicToggleBtn.classList.add('playing');
+                    }).catch(e => console.log("Audio play failed on interaction:", e));
+                }
+            });
+        }
+
+        if (menuToggle && navLinks) {
+            menuToggle.addEventListener('click', function() {
+                navLinks.classList.toggle('mobile-open');
+            });
+        }
+
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section && websiteContainer) {
+                websiteContainer.scrollTo({
+                    top: section.offsetTop - 60,
+                    behavior: 'smooth'
+                });
+            }
+            if (navLinks) {
+                navLinks.classList.remove('mobile-open');
+            }
+        }
 
         const urlParams = new URLSearchParams(window.location.search);
         const maxAdditionalGuests = parseInt(urlParams.get('max')) || 1;
@@ -881,8 +912,8 @@ document.getElementById('viewDetailsBtn').addEventListener('click', function() {
             const now = new Date();
             const todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
             
-            const nikkahUTC = Date.UTC(2027, 6, 2);   
-            const weddingUTC = Date.UTC(2027, 6, 4); 
+            const nikkahUTC = Date.UTC(2027, 6, 2);    
+            const weddingUTC = Date.UTC(2027, 6, 4);   
 
             const msPerDay = 1000 * 60 * 60 * 24;
             const nikkahDiff = Math.round((nikkahUTC - todayUTC) / msPerDay);
@@ -891,263 +922,74 @@ document.getElementById('viewDetailsBtn').addEventListener('click', function() {
             const nikkahEl = document.getElementById('nikkah-days');
             const weddingEl = document.getElementById('wedding-days');
 
-            if (nikkahEl) nikkahEl.innerText = nikkahDiff >= 0 ? nikkahDiff : '0';
-            if (weddingEl) weddingEl.innerText = weddingDiff >= 0 ? weddingDiff : '0';
+            if (nikkahEl) nikkahEl.textContent = nikkahDiff >= 0 ? nikkahDiff : '0';
+            if (weddingEl) weddingEl.textContent = weddingDiff >= 0 ? weddingDiff : '0';
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            updateDayCountdowns();
-
-            const viewBtn = document.getElementById('viewDetailsBtn');
-            const authOverlay = document.getElementById('auth-overlay');
-            const websiteContainer = document.getElementById('website-container');
-            const attendanceSelect = document.getElementById('attendance-status');
-            const additionalSection = document.getElementById('additional-attendees-section');
-            const addGuestBtn = document.getElementById('add-guest-btn');
-            const attendeesList = document.getElementById('attendees-list');
-            const rsvpForm = document.getElementById('rsvp-form');
-            const confirmationMsg = document.getElementById('confirmation-message');
-            const menuToggle = document.getElementById('menu-toggle');
-            const navLinks = document.getElementById('nav-links');
-
-            if (viewBtn) {
-                viewBtn.addEventListener('click', function() {
-                    authOverlay.classList.add('hidden');
-                    websiteContainer.classList.add('active');
-                    
-                    if (!isMusicPlaying) {
-                        bgMusic.play().then(() => {
-                            isMusicPlaying = true;
-                            musicToggleBtn.classList.add('playing');
-                            musicIcon.innerHTML = `
-                                <path d="M9 18V5l12-2v13"></path>
-                                <circle cx="6" cy="18" r="3"></circle>
-                                <circle cx="18" cy="16" r="3"></circle>
-                                <line x1="1" y1="1" x2="23" y2="23" stroke="var(--deep-maroon)" stroke-width="2"></line>
-                            `;
-                        }).catch(err => {
-                            console.log("Auto-play blocked by browser policy:", err);
-                        });
-                    }
-                });
-            }
-
-            if (menuToggle && navLinks) {
-                menuToggle.addEventListener('click', function() {
-                    navLinks.classList.toggle('mobile-open');
-                });
-                
-                navLinks.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', () => {
-                        navLinks.classList.remove('mobile-open');
-                    });
-                });
-            }
-
-            if (attendanceSelect) {
-                attendanceSelect.addEventListener('change', function() {
-                    if (this.value === 'yes') {
-                        additionalSection.style.display = 'block';
-                    } else {
-                        additionalSection.style.display = 'none';
-                        attendeesList.innerHTML = '';
-                    }
-                });
-            }
-
-            let guestCount = 0;
-            if (addGuestBtn) {
-                addGuestBtn.addEventListener('click', function() {
-                    if (guestCount < maxAdditionalGuests) {
-                        guestCount++;
-                        const card = document.createElement('div');
-                        card.className = 'attendee-card';
-                        card.innerHTML = `
-                            <button type="button" class="remove-attendee">Remove</button>
-                            <div class="form-group" style="margin-top: 5px;">
-                                <label>Guest ${guestCount} Full Name</label>
-                                <input type="text" name="guest_${guestCount}_name" required placeholder="Guest Full Name">
-                            </div>
-                        `;
-                        card.querySelector('.remove-attendee').addEventListener('click', function() {
-                            card.remove();
-                            guestCount--;
-                            if (guestCount === 0) {
-                                addGuestBtn.style.display = 'block';
-                            }
-                        });
-                        attendeesList.appendChild(card);
-
-                        if (guestCount >= maxAdditionalGuests) {
-                            addGuestBtn.style.display = 'none';
-                        }
-                    }
-                });
-            }
-
-            if (rsvpForm) {
-                rsvpForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(rsvpForm);
-                    
-                    fetch(rsvpForm.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: { 'Accept': 'application/json' }
-                    }).then(response => {
-                        if (response.log || response.ok) {
-                            rsvpForm.style.display = 'none';
-                            confirmationMsg.style.display = 'block';
-                        } else {
-                            alert('There was a problem submitting your RSVP. Please try again.');
-                        }
-                    }).catch(error => {
-                        alert('There was a network error. Please check your connection.');
-                    });
-                });
-            }
-        });
-
-        function scrollToSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            const websiteContainer = document.getElementById('website-container');
-            if (section && websiteContainer) {
-                websiteContainer.scrollTo({
-                    top: section.offsetTop - 60,
-                    behavior: 'smooth'
-                });
-            }
-            
-            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-
- <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const maxAdditionalGuests = parseInt(urlParams.get('max')) || 1;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuToggle = document.getElementById('menu-toggle');
-            const navLinks = document.getElementById('nav-links');
-            const attendanceSelect = document.getElementById('attendance');
-            const additionalSection = document.getElementById('additional-guests-section');
-            const attendeesList = document.getElementById('attendees-list');
-            const addGuestBtn = document.getElementById('add-guest-btn');
-            const rsvpForm = document.getElementById('rsvp-form');
-            const confirmationMsg = document.getElementById('confirmation-message');
-
-            if (menuToggle && navLinks) {
-                menuToggle.addEventListener('click', function() {
-                    navLinks.classList.toggle('mobile-open');
-                });
-                
-                navLinks.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', () => {
-                        navLinks.classList.remove('mobile-open');
-                    });
-                });
-            }
-
-            if (attendanceSelect && additionalSection) {
-                attendanceSelect.addEventListener('change', function() {
-                    if (this.value === 'yes') {
-                        additionalSection.style.display = 'block';
-                    } else {
-                        additionalSection.style.display = 'none';
-                        if (attendeesList) attendeesList.innerHTML = '';
-                    }
-                });
-            }
-
-            let guestCount = 0;
-            if (addGuestBtn && attendeesList) {
-                addGuestBtn.addEventListener('click', function() {
-                    if (guestCount < maxAdditionalGuests) {
-                        guestCount++;
-                        const card = document.createElement('div');
-                        card.className = 'attendee-card';
-                        card.innerHTML = `
-                            <button type="button" class="remove-attendee">Remove</button>
-                            <div class="form-group" style="margin-top: 5px;">
-                                <label>Guest ${guestCount} Full Name</label>
-                                <input type="text" name="guest_${guestCount}_name" required placeholder="Guest Full Name">
-                            </div>
-                        `;
-                        card.querySelector('.remove-attendee').addEventListener('click', function() {
-                            card.remove();
-                            guestCount--;
-                            if (guestCount === 0 && addGuestBtn) {
-                                addGuestBtn.style.display = 'block';
-                            }
-                        });
-                        attendeesList.appendChild(card);
-
-                        if (guestCount >= maxAdditionalGuests) {
-                            addGuestBtn.style.display = 'none';
-                        }
-                    }
-                });
-            }
-
-            if (rsvpForm) {
-                rsvpForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(rsvpForm);
-                    
-                    fetch(rsvpForm.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: { 'Accept': 'application/json' }
-                    }).then(response => {
-                        if (response.ok) { // Fixed from response.log
-                            rsvpForm.style.display = 'none';
-                            if (confirmationMsg) confirmationMsg.style.display = 'block';
-                        } else {
-                            alert('There was a problem submitting your RSVP. Please try again.');
-                        }
-                    }).catch(error => {
-                        alert('There was a network error. Please check your connection.');
-                    });
-                });
-            }
-        });
-
-        function scrollToSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            const websiteContainer = document.getElementById('website-container');
-            if (section && websiteContainer) {
-                websiteContainer.scrollTo({
-                    top: section.offsetTop - 60,
-                    behavior: 'smooth'
-                });
-            }
-            
-            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            if (event && event.target) {
-                event.target.classList.add('active');
-            }
-        }
-
-        function updateDayCountdowns() {
-            const now = new Date();
-            const todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-            
-            // Target Dates: July 2, 2027 (Nikkah) and July 4, 2027 (Wedding)
-            const nikkahDate = Date.UTC(2027, 6, 2); 
-            const weddingDate = Date.UTC(2027, 6, 4);
-
-            const nikkahDiff = Math.ceil((nikkahDate - todayUTC) / (1000 * 60 * 60 * 24));
-            const weddingDiff = Math.ceil((weddingDate - todayUTC) / (1000 * 60 * 60 * 24));
-
-            const nikkahEl = document.getElementById('nikkah-countdown');
-            const weddingEl = document.getElementById('wedding-countdown');
-
-            if (nikkahEl) nikkahEl.innerText = nikkahDiff >= 0 ? nikkahDiff : 0;
-            if (weddingEl) weddingEl.innerText = weddingDiff >= 0 ? weddingDiff : 0;
-        }
-
-        // Initialize Countdown
         updateDayCountdowns();
+
+        // RSVP Guest Form Logic
+        const attendanceSelect = document.getElementById('attendance-status');
+        const additionalAttendeesSection = document.getElementById('additional-attendees-section');
+        const addGuestBtn = document.getElementById('add-guest-btn');
+        const attendeesList = document.getElementById('attendees-list');
+        const rsvpForm = document.getElementById('rsvp-form');
+        const confirmationMessage = document.getElementById('confirmation-message');
+
+        if (attendanceSelect) {
+            attendanceSelect.addEventListener('change', function() {
+                if (this.value === 'yes') {
+                    if (additionalAttendeesSection) additionalAttendeesSection.style.display = 'block';
+                } else {
+                    if (additionalAttendeesSection) additionalAttendeesSection.style.display = 'none';
+                    if (attendeesList) attendeesList.innerHTML = '';
+                }
+            });
+        }
+
+        if (addGuestBtn && attendeesList) {
+            addGuestBtn.addEventListener('click', function() {
+                const currentCount = attendeesList.querySelectorAll('.attendee-card').length;
+                if (currentCount < maxAdditionalGuests) {
+                    const card = document.createElement('div');
+                    card.className = 'attendee-card';
+                    card.innerHTML = `
+                        <button type="button" class="remove-attendee">Remove</button>
+                        <div class="form-group" style="margin-top: 5px;">
+                            <label>Guest Full Name</label>
+                            <input type="text" name="additional_guest_${currentCount + 1}" required placeholder="Full Name">
+                        </div>
+                    `;
+                    card.querySelector('.remove-attendee').addEventListener('click', function() {
+                        card.remove();
+                    });
+                    attendeesList.appendChild(card);
+                } else {
+                    alert(`You can add a maximum of ${maxAdditionalGuests} additional guest(s) based on your invitation.`);
+                }
+            });
+        }
+
+        if (rsvpForm) {
+            rsvpForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(rsvpForm);
+                fetch(rsvpForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                }).then(response => {
+                    if (response.ok) {
+                        rsvpForm.style.display = 'none';
+                        if (confirmationMessage) confirmationMessage.style.display = 'block';
+                    } else {
+                        alert('There was a problem submitting your RSVP. Please try again.');
+                    }
+                }).catch(error => {
+                    alert('There was a network error. Please check your connection.');
+                });
+            });
+        }
     </script>
 </body>
 </html>
