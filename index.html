@@ -1021,6 +1021,133 @@ document.getElementById('viewDetailsBtn').addEventListener('click', function() {
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
             event.target.classList.add('active');
         }
+
+ <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const maxAdditionalGuests = parseInt(urlParams.get('max')) || 1;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menu-toggle');
+            const navLinks = document.getElementById('nav-links');
+            const attendanceSelect = document.getElementById('attendance');
+            const additionalSection = document.getElementById('additional-guests-section');
+            const attendeesList = document.getElementById('attendees-list');
+            const addGuestBtn = document.getElementById('add-guest-btn');
+            const rsvpForm = document.getElementById('rsvp-form');
+            const confirmationMsg = document.getElementById('confirmation-message');
+
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', function() {
+                    navLinks.classList.toggle('mobile-open');
+                });
+                
+                navLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navLinks.classList.remove('mobile-open');
+                    });
+                });
+            }
+
+            if (attendanceSelect && additionalSection) {
+                attendanceSelect.addEventListener('change', function() {
+                    if (this.value === 'yes') {
+                        additionalSection.style.display = 'block';
+                    } else {
+                        additionalSection.style.display = 'none';
+                        if (attendeesList) attendeesList.innerHTML = '';
+                    }
+                });
+            }
+
+            let guestCount = 0;
+            if (addGuestBtn && attendeesList) {
+                addGuestBtn.addEventListener('click', function() {
+                    if (guestCount < maxAdditionalGuests) {
+                        guestCount++;
+                        const card = document.createElement('div');
+                        card.className = 'attendee-card';
+                        card.innerHTML = `
+                            <button type="button" class="remove-attendee">Remove</button>
+                            <div class="form-group" style="margin-top: 5px;">
+                                <label>Guest ${guestCount} Full Name</label>
+                                <input type="text" name="guest_${guestCount}_name" required placeholder="Guest Full Name">
+                            </div>
+                        `;
+                        card.querySelector('.remove-attendee').addEventListener('click', function() {
+                            card.remove();
+                            guestCount--;
+                            if (guestCount === 0 && addGuestBtn) {
+                                addGuestBtn.style.display = 'block';
+                            }
+                        });
+                        attendeesList.appendChild(card);
+
+                        if (guestCount >= maxAdditionalGuests) {
+                            addGuestBtn.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            if (rsvpForm) {
+                rsvpForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(rsvpForm);
+                    
+                    fetch(rsvpForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'Accept': 'application/json' }
+                    }).then(response => {
+                        if (response.ok) { // Fixed from response.log
+                            rsvpForm.style.display = 'none';
+                            if (confirmationMsg) confirmationMsg.style.display = 'block';
+                        } else {
+                            alert('There was a problem submitting your RSVP. Please try again.');
+                        }
+                    }).catch(error => {
+                        alert('There was a network error. Please check your connection.');
+                    });
+                });
+            }
+        });
+
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const websiteContainer = document.getElementById('website-container');
+            if (section && websiteContainer) {
+                websiteContainer.scrollTo({
+                    top: section.offsetTop - 60,
+                    behavior: 'smooth'
+                });
+            }
+            
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        function updateDayCountdowns() {
+            const now = new Date();
+            const todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            // Target Dates: July 2, 2027 (Nikkah) and July 4, 2027 (Wedding)
+            const nikkahDate = Date.UTC(2027, 6, 2); 
+            const weddingDate = Date.UTC(2027, 6, 4);
+
+            const nikkahDiff = Math.ceil((nikkahDate - todayUTC) / (1000 * 60 * 60 * 24));
+            const weddingDiff = Math.ceil((weddingDate - todayUTC) / (1000 * 60 * 60 * 24));
+
+            const nikkahEl = document.getElementById('nikkah-countdown');
+            const weddingEl = document.getElementById('wedding-countdown');
+
+            if (nikkahEl) nikkahEl.innerText = nikkahDiff >= 0 ? nikkahDiff : 0;
+            if (weddingEl) weddingEl.innerText = weddingDiff >= 0 ? weddingDiff : 0;
+        }
+
+        // Initialize Countdown
+        updateDayCountdowns();
     </script>
 </body>
 </html>
