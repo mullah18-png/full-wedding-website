@@ -404,6 +404,63 @@
             line-height: 1.6;
         }
 
+        /* Slideshow Venue Styling */
+        .venue-slideshow-container {
+            width: 100%;
+            height: 280px;
+            background: var(--blush-dark);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 25px;
+            margin-bottom: 20px;
+            border: 1px solid var(--blush-dark);
+            position: relative;
+        }
+
+        .venue-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .venue-slide.active {
+            opacity: 1;
+        }
+
+        .venue-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Slideshow Navigation Dots */
+        .slideshow-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .dot.active {
+            background: var(--white);
+        }
+
         /* Gallery Grid */
         .gallery-grid {
             display: grid;
@@ -544,9 +601,9 @@
         /* Map Embed Container */
         .map-container {
             width: 100%;
-            height: 280px;
+            height: 250px;
             background: #eee;
-            margin-top: 30px;
+            margin-top: 15px;
             border: 1px solid rgba(212, 175, 55, 0.3);
         }
 
@@ -625,7 +682,7 @@
             <div class="floral-corner corner-bl"></div>
             <div class="floral-corner corner-br"></div>
 
-            <p class="section-subtitle">Wedding Reception</p>
+            <p class="section-subtitle">Milly and Alvi's Wedding Celebration</p>
             <h2 class="script-font">M & A</h2>
             <p>July 02 & July 04, 2027 • CT & NY</p>
             <button id="viewDetailsBtn" type="button">Open Website</button>
@@ -675,7 +732,7 @@
                         </div>
                         <div class="countdown-box">
                             <div class="countdown-days" id="wedding-days">--</div>
-                            <div class="countdown-label">Days Until Wedding<br>(July 4, 2027)</div>
+                            <div class="countdown-label">Days Until Wedding Reception<br>(July 4, 2027)</div>
                         </div>
                     </div>
                 </div>
@@ -717,6 +774,20 @@
                         </div>
                     </div>
 
+                    <!-- Anthony's Ocean View Venue Slideshow -->
+                    <div class="venue-slideshow-container" id="nikkah-slideshow">
+                        <div class="venue-slide active">
+                            <img src="https://cdn0.weddingwire.com/vendor/336040/3_2/960/png/ceremonyshot_51_40633-169228231446130.jpeg" alt="Anthony's Ocean View 1">
+                        </div>
+                        <div class="venue-slide">
+                            <img src="https://www.weddingreports.com/wp-content/uploads/anthonys-ocean-view-connecticut.jpg" alt="Anthony's Ocean View 2">
+                        </div>
+                        <div class="slideshow-dots" id="nikkah-dots">
+                            <span class="dot active" onclick="currentSlide('nikkah', 0)"></span>
+                            <span class="dot" onclick="currentSlide('nikkah', 1)"></span>
+                        </div>
+                    </div>
+
                     <div class="map-container">
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3005.419018471776!2d-72.90823492346985!3d41.24844097138558!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e87804078fca6b%3A0xfdb8db1c19629417!2s450%20Lighthouse%20Rd%2C%20New%20Haven%2C%20CT%2006512!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
                     </div>
@@ -741,6 +812,20 @@
                     <p style="font-size: 0.9rem; color: #444; margin-top: 20px; line-height: 1.7; max-width: 600px; margin-left: auto; margin-right: auto;">
                         With the blessings of Allah, our story is just beginning. We would love nothing more than to have our favorite people beside us as we celebrate our union with dinner and a grand reception.
                     </p>
+
+                    <!-- VIP Country Club Venue Slideshow -->
+                    <div class="venue-slideshow-container" id="wedding-slideshow">
+                        <div class="venue-slide active">
+                            <img src="https://i.pinimg.com/564x/37/63/cf/3763cf151a41d8febd821b77fe0e6efa.jpg" alt="VIP Country Club 1">
+                        </div>
+                        <div class="venue-slide">
+                            <img src="https://cdn0.weddingwire.com/vendor/302120/3_2/1280/jpg/ceremony-pergola_51_21203.jpeg" alt="VIP Country Club 2">
+                        </div>
+                        <div class="slideshow-dots" id="wedding-dots">
+                            <span class="dot active" onclick="currentSlide('wedding', 0)"></span>
+                            <span class="dot" onclick="currentSlide('wedding', 1)"></span>
+                        </div>
+                    </div>
 
                     <div class="map-container">
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3012.756285434522!2d-73.77492982347915!3d40.90226307136735!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c28db745fb1ae9%3A0xf0861954a7c5b6a3!2s600%20Davenport%20Ave%2C%20New%20Rochelle%2C%20NY%2010805!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
@@ -800,7 +885,7 @@
                     </form>
 
                     <div class="confirmation-msg" id="confirmation-message">
-                        Thank you! Your response has been securely recorded. We look forward to celebrating with you!
+                        Thank you! Your response has been securely recorded. We look forward to celebrating with you.
                     </div>
                 </div>
             </div>
@@ -882,6 +967,45 @@
                 navLinks.classList.remove('mobile-open');
             }
         }
+
+        // Venue Slideshow Logic for Multiple Sliders
+        let slideshowStates = {
+            'nikkah-slideshow': 0,
+            'wedding-slideshow': 0
+        };
+
+        function showSlide(containerId, n) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const slides = container.querySelectorAll('.venue-slide');
+            const dots = container.querySelectorAll('.dot');
+
+            if (n >= slides.length) slideshowStates[containerId] = 0;
+            if (n < 0) slideshowStates[containerId] = slides.length - 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            slides[slideshowStates[containerId]].classList.add('active');
+            dots[slideshowStates[containerId]].classList.add('active');
+        }
+
+        function currentSlide(sectionType, n) {
+            const containerId = sectionType + '-slideshow';
+            slideshowStates[containerId] = n;
+            showSlide(containerId, slideshowStates[containerId]);
+        }
+
+        // Auto advance slideshows independently
+        setInterval(() => {
+            slideshowStates['nikkah-slideshow']++;
+            showSlide('nikkah-slideshow', slideshowStates['nikkah-slideshow']);
+        }, 4500);
+
+        setInterval(() => {
+            slideshowStates['wedding-slideshow']++;
+            showSlide('wedding-slideshow', slideshowStates['wedding-slideshow']);
+        }, 5000);
 
         // Dynamic Countdown Logic
         function updateCountdowns() {
